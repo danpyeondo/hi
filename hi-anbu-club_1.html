@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hi ! 안부 클럽</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'NeoDunggeunmo';
+      src: url('https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/neodgm.woff2') format('woff2'),
+           url('https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/neodgm.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #ffffff;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    .app { max-width: 600px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+
+    .header { margin-bottom: 3rem; }
+    .header-title-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'NeoDunggeunmo', monospace; font-size: 18px;
+      color: #1a1a1a; border: 1.5px solid #1a1a1a;
+      border-radius: 999px; padding: 7px 24px;
+    }
+    .header-sub {
+      font-family: 'Gothic A1', sans-serif; font-size: 13px;
+      color: #555; text-decoration: underline;
+      text-underline-offset: 4px; margin-top: 0.6rem;
+    }
+    .round-badge { font-family: 'Gothic A1', sans-serif; font-size: 11px; color: #999; margin-top: 0.5rem; }
+
+    .nav-tabs { display: flex; border-bottom: 0.5px solid #ddd; margin-bottom: 2.5rem; }
+    .tab {
+      font-family: 'Gothic A1', sans-serif; font-size: 13px; padding: 0.5rem 0;
+      margin-right: 1.5rem; color: #888; cursor: pointer;
+      border-bottom: 1.5px solid transparent; margin-bottom: -0.5px;
+    }
+    .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; font-weight: 500; }
+
+    .progress-row { display: flex; gap: 6px; margin-bottom: 2rem; flex-wrap: wrap; }
+    .progress-chip {
+      font-family: 'Gothic A1', sans-serif; font-size: 11px;
+      padding: 4px 10px; border: 0.5px solid #ddd;
+      border-radius: 6px; color: #aaa;
+    }
+    .progress-chip.done { border-color: #1a1a1a; color: #1a1a1a; }
+    .progress-chip.me { border-color: #1a1a1a; color: #1a1a1a; font-weight: 500; }
+
+    .lock-banner {
+      border: 0.5px solid #ddd; border-radius: 8px;
+      padding: 2.5rem; text-align: center; margin-bottom: 2rem;
+    }
+    .lock-icon { font-size: 22px; margin-bottom: 0.75rem; }
+    .lock-msg { font-family: 'Gothic A1', sans-serif; font-size: 14px; color: #666; line-height: 1.9; }
+    .lock-msg strong { color: #1a1a1a; font-weight: 500; }
+    .lock-cta {
+      display: inline-block; margin-top: 1.25rem;
+      font-family: 'Gothic A1', sans-serif; font-size: 13px; font-weight: 500;
+      color: #1a1a1a; border-bottom: 1px solid #1a1a1a;
+      cursor: pointer; padding-bottom: 1px;
+    }
+
+    .anbu-list { display: flex; flex-direction: column; }
+    .anbu-card { padding: 2rem 0; border-bottom: 0.5px solid #eee; cursor: pointer; }
+    .anbu-card:first-child { border-top: 0.5px solid #eee; }
+    .anbu-card:hover .anbu-preview { color: #1a1a1a; }
+    .anbu-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+    .anbu-author { font-family: 'NeoDunggeunmo', monospace; font-size: 13px; color: #1a1a1a; }
+    .anbu-date { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #aaa; }
+    .anbu-preview {
+      font-family: 'NeoDunggeunmo', monospace; font-size: 13px; line-height: 1.9;
+      color: #666; display: -webkit-box; -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-extras { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.25rem; }
+    .card-extra-row { display: flex; align-items: center; gap: 10px; }
+    .extra-box {
+      font-family: 'NeoDunggeunmo', monospace; font-size: 11px; color: #1a1a1a;
+      border: 1px solid #1a1a1a; border-radius: 0;
+      padding: 4px 10px; white-space: nowrap; flex-shrink: 0;
+    }
+    .card-extra-text { font-family: 'NeoDunggeunmo', monospace; font-size: 12px; color: #666; }
+    .anbu-footer { margin-top: 0.9rem; }
+    .footer-tag { font-family: 'Gothic A1', sans-serif; font-size: 11px; color: #aaa; }
+    .footer-tag.highlight { color: #3b7de9; }
+
+    .detail-view { display: none; }
+    .back-btn {
+      font-family: 'Gothic A1', sans-serif; font-size: 13px; color: #888;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 2.5rem;
+      background: none; border: none;
+    }
+    .back-btn:hover { color: #1a1a1a; }
+    .detail-author-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 2rem; }
+    .detail-author { font-family: 'NeoDunggeunmo', monospace; font-size: 14px; color: #1a1a1a; }
+    .detail-date { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #aaa; }
+    .detail-body { font-family: 'NeoDunggeunmo', monospace; font-size: 14px; line-height: 2; color: #1a1a1a; white-space: pre-wrap; margin-bottom: 2rem; }
+    .detail-extras { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+    .detail-extra-row { display: flex; align-items: center; gap: 12px; }
+    .detail-extra-text { font-family: 'NeoDunggeunmo', monospace; font-size: 13px; line-height: 1.8; color: #1a1a1a; }
+    .tail-section { border-top: 0.5px solid #eee; padding-top: 1.75rem; }
+    .tail-label { font-family: 'Gothic A1', sans-serif; font-size: 11px; color: #aaa; margin-bottom: 1.25rem; }
+    .tail-item { margin-bottom: 1.25rem; }
+    .tail-to { font-family: 'Gothic A1', sans-serif; font-size: 11px; color: #aaa; margin-bottom: 0.3rem; }
+    .tail-text { font-family: 'Gothic A1', sans-serif; font-size: 13px; line-height: 1.8; color: #1a1a1a; padding-left: 0.75rem; border-left: 2px solid #ccc; }
+    .tail-text.to-me { border-left-color: #3b7de9; }
+
+    .write-section-label { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #666; margin-bottom: 0.75rem; }
+    .write-main {
+      width: 100%; font-family: 'NeoDunggeunmo', monospace; font-size: 13px; line-height: 2;
+      border: 0.5px solid #ddd; border-radius: 8px; padding: 1.25rem;
+      min-height: 280px; resize: none; color: #1a1a1a; background: #fff; margin-bottom: 2rem;
+    }
+    .write-main:focus { outline: none; border-color: #aaa; }
+    .write-main::placeholder { color: #bbb; line-height: 2; }
+    .extra-write-block { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+    .extra-write-input {
+      flex: 1; font-family: 'NeoDunggeunmo', monospace; font-size: 13px;
+      border: none; border-bottom: 0.5px solid #ddd;
+      padding: 6px 2px; color: #1a1a1a; background: transparent;
+    }
+    .extra-write-input:focus { outline: none; border-bottom-color: #aaa; }
+    .extra-write-input::placeholder { color: #bbb; }
+    .divider { height: 0.5px; background: #eee; margin: 2rem 0; }
+    .tail-write-label { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #666; margin-bottom: 0.4rem; }
+    .tail-write-sub { font-family: 'Gothic A1', sans-serif; font-size: 11px; color: #aaa; margin-bottom: 1.5rem; line-height: 1.7; }
+    .member-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem; }
+    .member-name { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #1a1a1a; min-width: 36px; padding-top: 10px; }
+    .member-input {
+      flex: 1; font-family: 'Gothic A1', sans-serif; font-size: 12px; line-height: 1.8;
+      border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 12px;
+      color: #1a1a1a; background: #fff; resize: none; min-height: 60px;
+    }
+    .member-input:focus { outline: none; border-color: #aaa; }
+    .member-input::placeholder { color: #bbb; }
+    .submit-btn {
+      width: 100%; padding: 13px; font-family: 'Gothic A1', sans-serif; font-size: 13px; font-weight: 500;
+      background: #1a1a1a; color: #fff; border: none; border-radius: 8px; cursor: pointer;
+    }
+    .submit-btn:hover { opacity: 0.8; }
+    .already-wrote { font-family: 'Gothic A1', sans-serif; font-size: 13px; color: #888; padding: 2rem 0; line-height: 1.8; }
+
+    /* 로그인 */
+    .login-screen { padding-top: 1rem; }
+    .login-label { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #666; margin-bottom: 1rem; }
+    .name-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 2rem; }
+    .name-btn {
+      font-family: 'NeoDunggeunmo', monospace; font-size: 13px;
+      border: 0.5px solid #ccc; border-radius: 8px;
+      padding: 10px 4px; cursor: pointer; background: #fff;
+      color: #1a1a1a; text-align: center;
+    }
+    .name-btn:hover { background: #f5f5f5; }
+    .name-btn.selected { border: 1.5px solid #1a1a1a; }
+    .pw-row { display: flex; gap: 8px; margin-bottom: 0.75rem; }
+    .pw-input {
+      flex: 1; font-family: 'Gothic A1', sans-serif; font-size: 13px;
+      border: 0.5px solid #ddd; border-radius: 8px; padding: 10px 12px;
+      color: #1a1a1a; background: #fff;
+    }
+    .pw-input:focus { outline: none; border-color: #aaa; }
+    .pw-input::placeholder { color: #bbb; }
+    .login-btn {
+      font-family: 'Gothic A1', sans-serif; font-size: 13px; font-weight: 500;
+      background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer;
+    }
+    .login-err { font-family: 'Gothic A1', sans-serif; font-size: 12px; color: #c00; margin-top: 0.5rem; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-title-badge">Hi ! 안부 클럽</div>
+    <div class="header-sub">다정하고 느슨한 연결을 위해!</div>
+    <div class="round-badge" id="round-badge">1회차 진행 중</div>
+  </div>
+
+  <!-- 로그인 -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-label">나는 누구예요?</div>
+    <div class="name-grid" id="name-grid"></div>
+    <div class="login-label">공유 코드</div>
+    <div class="pw-row">
+      <input class="pw-input" id="pw-input" type="password" placeholder="코드를 입력해요" />
+      <button class="login-btn" onclick="doLogin()">들어가기</button>
+    </div>
+    <div class="login-err" id="login-err"></div>
+  </div>
+
+  <!-- 메인 -->
+  <div id="main-screen" style="display:none;">
+    <div class="nav-tabs">
+      <div class="tab active" onclick="showTab('feed')">안부 모아보기</div>
+      <div class="tab" onclick="showTab('write')">안부 쓰기</div>
+    </div>
+    <div id="feed-section">
+      <div class="progress-row" id="progress-row"></div>
+      <div id="feed-content"></div>
+    </div>
+    <div id="write-section" style="display:none;">
+      <div id="write-content"></div>
+    </div>
+  </div>
+
+  <!-- 상세 -->
+  <div class="detail-view" id="detail-view">
+    <button class="back-btn" onclick="closeDetail()">← 목록으로</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<script>
+  const MEMBERS = ['달마', '터무늬', '지수', '하은', '태오'];
+  const PASSWORD = '1234';
+  const ROUND = 1;
+
+  const SAMPLE = [
+    {
+      author: '터무늬', round: 1, date: '6월 11일',
+      body: `이번 주 내내 조금 이상한 기분이었어. 딱히 나쁜 일이 있었던 건 아닌데, 뭔가 몸이 한 템포 늦게 따라오는 느낌? 아침에 일어나면 이미 피곤하고, 퇴근하면 아무것도 하기 싫어서 그냥 누워있다가 자는 패턴이 반복됐어.
+
+그래도 하나 좋은 게 생겼는데, 퇴근길에 한 정거장 먼저 내려서 걸어오기 시작했어. 처음엔 그냥 버스가 막혀서 어쩔 수 없이 내렸던 건데, 걷다 보니까 생각보다 좋더라. 아무것도 안 해도 되는 시간이랄까.
+
+어제는 골목 안쪽에 작은 빵집을 발견했어. 문 앞에 칠판에 "오늘 남은 빵: 소금버터 3개"라고 써있었는데 들어갔더니 딱 하나 남아있었고. 그걸 사서 걸으면서 먹었는데 그날은 기분이 좀 나아졌어.`,
+      joy: '소금버터 빵 마지막 거 건진 것',
+      cute: '퇴근길에 만난 주황 고양이가 따라옴',
+      messages: [
+        { to: '달마', text: '달마는 요즘 퇴근 후에 어때? 방전되는 편이야, 아니면 뭔가 하고 싶어지는 편이야?' },
+        { to: '태오', text: '태오는 기분이 처질 때 어떻게 해? 그냥 내버려두는 편이야 아니면 뭔가 하려고 하는 편이야?' }
+      ]
+    },
+    {
+      author: '지수', round: 1, date: '6월 10일',
+      body: `지난주에 오랜만에 고향 다녀왔어. 별 이유는 없고 그냥 명절도 아닌데 가고 싶어서. 엄마한테 전화했더니 "갑자기 왜?" 하길래 그냥 보고 싶어서라고 했는데 전화 끊고 나서 좀 웃겼어. 나도 그 이유를 잘 모르겠거든.
+
+집에 가니까 달라진 게 많더라. 내 방이 창고가 돼있었고, 내가 좋아하던 동네 분식집이 없어져 있었어. 아파트도 한 동이 새로 올라가 있었고. 근데 이상하게 서운하진 않았어.
+
+엄마랑 밥 먹으면서 별 얘기 안 했어. 티비 보면서 밥 먹고, 엄마 유튜브 추천 받고, 그것만 했는데 올라오는 길에 생각해보니까 그게 좋았어.`,
+      joy: '',
+      cute: '엄마가 유튜브 알고리즘에 완전히 잡혀있었음',
+      messages: [
+        { to: '하은', text: '하은이는 고향 자주 내려가는 편이야? 아니면 나처럼 가끔 생각날 때 가는 편이야?' }
+      ]
+    }
+  ];
+
+  let posts = [...SAMPLE];
+  let me = null;
+  let wrote = false;
+
+  function init() {
+    const grid = document.getElementById('name-grid');
+    grid.innerHTML = MEMBERS.map(n =>
+      `<div class="name-btn" onclick="selectName('${n}')">${n}</div>`
+    ).join('');
+  }
+
+  function selectName(name) {
+    me = name;
+    document.querySelectorAll('.name-btn').forEach(b => {
+      b.classList.toggle('selected', b.textContent === name);
+    });
+  }
+
+  function doLogin() {
+    const pw = document.getElementById('pw-input').value;
+    const err = document.getElementById('login-err');
+    if (!me) { err.textContent = '이름을 먼저 선택해요.'; return; }
+    if (pw !== PASSWORD) { err.textContent = '코드가 맞지 않아요.'; return; }
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display = '';
+    renderFeed();
+    renderWrite();
+  }
+
+  function showTab(tab) {
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', (i === 0 && tab === 'feed') || (i === 1 && tab === 'write'));
+    });
+    document.getElementById('feed-section').style.display = tab === 'feed' ? '' : 'none';
+    document.getElementById('write-section').style.display = tab === 'write' ? '' : 'none';
+  }
+
+  function iWrote() {
+    return wrote || posts.some(p => p.author === me && p.round === ROUND);
+  }
+
+  function renderProgress() {
+    const doneAuthors = posts.filter(p => p.round === ROUND).map(p => p.author);
+    document.getElementById('progress-row').innerHTML = MEMBERS.map(m => {
+      const done = doneAuthors.includes(m);
+      const isMe = m === me;
+      return `<div class="progress-chip ${done ? (isMe ? 'me' : 'done') : ''}">${m}${done ? ' ✓' : ''}</div>`;
+    }).join('');
+  }
+
+  function renderFeed() {
+    renderProgress();
+    const el = document.getElementById('feed-content');
+    if (!iWrote()) {
+      el.innerHTML = `
+        <div class="lock-banner">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-msg">
+            <strong>${me}</strong>의 안부를 올리면<br>
+            이번 회차 모두의 글이 열려요.
+          </div>
+          <div class="lock-cta" onclick="showTab('write')">안부 쓰러 가기 →</div>
+        </div>`;
+      return;
+    }
+    const roundPosts = posts.filter(p => p.round === ROUND);
+    el.innerHTML = `<div class="anbu-list">${roundPosts.map(item => {
+      const toMe = item.messages.filter(m => m.to === me);
+      const extras = [];
+      if (item.joy) extras.push(`<div class="card-extra-row"><div class="extra-box">나누고 싶은 기쁜 일</div><span class="card-extra-text">${item.joy}</span></div>`);
+      if (item.cute) extras.push(`<div class="card-extra-row"><div class="extra-box">나누고 싶은 귀여운 일</div><span class="card-extra-text">${item.cute}</span></div>`);
+      return `<div class="anbu-card" onclick="openDetail('${item.author}')">
+        <div class="anbu-meta">
+          <span class="anbu-author">${item.author}</span>
+          <span class="anbu-date">${item.date}</span>
+        </div>
+        <div class="anbu-preview">${item.body}</div>
+        ${extras.length ? `<div class="card-extras">${extras.join('')}</div>` : ''}
+        <div class="anbu-footer">
+          ${toMe.length ? `<span class="footer-tag highlight">나에게 온 말 있음</span>` : `<span class="footer-tag">${item.messages.length}명에게 한마디</span>`}
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderWrite() {
+    const el = document.getElementById('write-content');
+    if (iWrote()) {
+      el.innerHTML = `<div class="already-wrote">이번 회차 안부를 이미 올렸어요.<br>다음 회차가 시작되면 다시 쓸 수 있어요.</div>`;
+      return;
+    }
+    const others = MEMBERS.filter(m => m !== me);
+    el.innerHTML = `
+      <div class="write-section-label">요즘 안부</div>
+      <textarea class="write-main" id="main-text" placeholder="요즘 어떻게 지내고 있어요.
+일어난 일, 생각하게 된 것, 별거 아닌 것도 다 좋아요.
+길게 써도 돼요."></textarea>
+      <div class="extra-write-block">
+        <div class="extra-box">나누고 싶은 기쁜 일</div>
+        <input class="extra-write-input" id="joy-input" type="text" placeholder="있었다면 적어요 (선택)" />
+      </div>
+      <div class="extra-write-block">
+        <div class="extra-box">나누고 싶은 귀여운 일</div>
+        <input class="extra-write-input" id="cute-input" type="text" placeholder="있었다면 적어요 (선택)" />
+      </div>
+      <div class="divider"></div>
+      <div class="tail-write-label">끝에 한마디 덧붙이기</div>
+      <div class="tail-write-sub">궁금한 게 생겼거나, 답하고 싶은 게 있으면 — 선택이에요.</div>
+      ${others.map(name => `
+        <div class="member-row">
+          <span class="member-name">${name}</span>
+          <textarea class="member-input" data-to="${name}" placeholder="${name}에게 — 질문이나 답장 (선택)"></textarea>
+        </div>`).join('')}
+      <button class="submit-btn" onclick="submitAnbu()">안부 올리기 → 모두의 글 열기</button>
+    `;
+  }
+
+  function submitAnbu() {
+    const body = document.getElementById('main-text').value.trim();
+    if (!body) return;
+    const joy = document.getElementById('joy-input').value.trim();
+    const cute = document.getElementById('cute-input').value.trim();
+    const messages = [];
+    document.querySelectorAll('.member-input').forEach(input => {
+      if (input.value.trim()) messages.push({ to: input.dataset.to, text: input.value.trim() });
+    });
+    const now = new Date();
+    posts.unshift({ author: me, round: ROUND, date: `${now.getMonth()+1}월 ${now.getDate()}일`, body, joy, cute, messages });
+    wrote = true;
+    renderFeed();
+    renderWrite();
+    showTab('feed');
+  }
+
+  function openDetail(author) {
+    const item = posts.find(p => p.author === author && p.round === ROUND);
+    if (!item) return;
+    document.getElementById('main-screen').style.display = 'none';
+    const dv = document.getElementById('detail-view');
+    dv.style.display = 'block';
+    const toMe = item.messages.filter(m => m.to === me);
+    const toOthers = item.messages.filter(m => m.to !== me);
+    const extras = [];
+    if (item.joy) extras.push(`<div class="detail-extra-row"><div class="extra-box">나누고 싶은 기쁜 일</div><div class="detail-extra-text">${item.joy}</div></div>`);
+    if (item.cute) extras.push(`<div class="detail-extra-row"><div class="extra-box">나누고 싶은 귀여운 일</div><div class="detail-extra-text">${item.cute}</div></div>`);
+    dv.querySelector('#detail-content').innerHTML = `
+      <div class="detail-author-row">
+        <span class="detail-author">${item.author}</span>
+        <span class="detail-date">${item.date}</span>
+      </div>
+      <div class="detail-body">${item.body}</div>
+      ${extras.length ? `<div class="detail-extras">${extras.join('')}</div>` : ''}
+      ${item.messages.length ? `
+      <div class="tail-section">
+        <div class="tail-label">한마디</div>
+        ${toMe.map(m => `<div class="tail-item"><div class="tail-to">나에게</div><div class="tail-text to-me">${m.text}</div></div>`).join('')}
+        ${toOthers.map(m => `<div class="tail-item"><div class="tail-to">${m.to}에게</div><div class="tail-text">${m.text}</div></div>`).join('')}
+      </div>` : ''}
+    `;
+  }
+
+  function closeDetail() {
+    document.getElementById('main-screen').style.display = '';
+    document.getElementById('detail-view').style.display = 'none';
+  }
+
+  init();
+</script>
+</body>
+</html>
